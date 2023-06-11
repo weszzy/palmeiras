@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Palmeiras Football Team</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a3913;
+            color: #ffffff;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1f5c24;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .player-photo img {
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-info .player-name {
+            margin: 0;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .player-details p {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Team Wins</h2>
+            <p id="wins">Loading...</p>
+        </div>
+
+        <div class="card">
+            <h2>Top Goal Scorers</h2>
+            <ul id="top-scorers"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Best Players</h2>
+            <div id="best-players"></div>
+        </div>
+
+        <div class="card">
+            <h2>Stadium Info</h2>
+            <p id="stadium">Loading...</p>
+        </div>
+
+        <div class="card">
+            <h2>Current Coach</h2>
+            <p id="coach">Loading...</p>
+        </div>
+
+        <div class="card">
+            <h2>Number of Players</h2>
+            <p id="num-players">Loading...</p>
+        </div>
+
+        <div class="card">
+            <h2>Latest Transfers</h2>
+            <ul id="transfers"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Team data
+        const teamData = {
+            wins: 10,
+            topScorers: ['Gustavo Gomez', 'Luiz Adriano', 'Dudu'],
+            bestPlayers: [
+                {
+                    photo: 'https://imagecache.365scores.com/image/upload/f_png,w_250,h_250,c_limit,q_auto:eco,d_Athletes:default.png,r_max,c_thumb,g_face,z_0.65/Athletes/42047',
+                    name: 'Raphael Veiga',
+                    height: '180cm',
+                    weight: '75kg',
+                    age: 25
+                },
+                {
+                    photo: 'data:image/jpeg;base64,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',
+                    name: 'Player 2',
+                    height: '185cm',
+                    weight: '80kg',
+                    age: 28
+                }
+            ],
+            stadium: 'Allianz Parque',
+            coach: 'Abel Ferreira',
+            numPlayers: 30,
+            transfers: ['Transfer 1', 'Transfer 2', 'Transfer 3']
+        };
+
+        // Update team wins
+        const winsElement = document.getElementById('wins');
+        winsElement.textContent = `Total Wins: ${teamData.wins}`;
+
+        // Update top goal scorers
+        const topScorersElement = document.getElementById('top-scorers');
+        topScorersElement.innerHTML = teamData.topScorers.map(scorer => `<li>${scorer}</li>`).join('');
+
+        // Update best players
+        const bestPlayersElement = document.getElementById('best-players');
+        bestPlayersElement.innerHTML = teamData.bestPlayers.map(player =>
+            `<div class="player-card">
+         <div class="player-photo">
+           <img src="${player.photo}" alt="${player.name}'s Photo" width="80">
+         </div>
+         <div class="player-info">
+           <p class="player-name">${player.name}</p>
+           <div class="player-details">
+             <p>Height: ${player.height}</p>
+             <p>Weight: ${player.weight}</p>
+             <p>Age: ${player.age}</p>
+           </div>
+         </div>
+       </div>`
+        ).join('');
+
+        // Update stadium info
+        const stadiumElement = document.getElementById('stadium');
+        stadiumElement.textContent = `Stadium: ${teamData.stadium}`;
+
+        // Update current coach
+        const coachElement = document.getElementById('coach');
+        coachElement.textContent = `Current Coach: ${teamData.coach}`;
+
+        // Update number of players
+        const numPlayersElement = document.getElementById('num-players');
+        numPlayersElement.textContent = `Number of Players: ${teamData.numPlayers}`;
+
+        // Update latest transfers
+        const transfersElement = document.getElementById('transfers');
+        transfersElement.innerHTML = teamData.transfers.map(transfer => `<li>${transfer}</li>`).join('');
+    </script>
+</body>
+
+</html>
